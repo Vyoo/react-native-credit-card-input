@@ -21,13 +21,16 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   form: {
-    marginHorizontal: 20,
-    marginVertical: 20,
+    //marginHorizontal: 20,
+    //marginVertical: 20,
   },
   inputContainer: {
-    marginLeft: 20,
+    //marginLeft: 20,
     marginTop: 20,
-    marginBottom: 20,
+    //marginBottom: 20,
+  },
+  expContainer: {
+    width: Dimensions.get("window").width / 3,
   },
   inputLabel: {
     fontWeight: "bold",
@@ -110,15 +113,7 @@ export default class CreditCardInput extends Component {
   _focus = field => {
     if (!field) return;
 
-    const scrollResponder = this.refs.Form.getScrollResponder();
-    const nodeHandle = findNodeHandle(this.refs[field]);
-
-    NativeModules.UIManager.measureLayoutRelativeToParent(nodeHandle,
-      e => { throw e; },
-      x => {
-        scrollResponder.scrollTo({ x: Math.max(x - PREVIOUS_FIELD_OFFSET, 0), animated: true });
-        this.refs[field].focus();
-      });
+    this.refs[field].focus();
   }
 
   _inputProps = field => {
@@ -192,7 +187,6 @@ export default class CreditCardInput extends Component {
         />
         <ScrollView
           ref="Form"
-          horizontal
           keyboardShouldPersistTaps="always"
           scrollEnabled={allowScroll}
           showsHorizontalScrollIndicator={false}
@@ -208,20 +202,22 @@ export default class CreditCardInput extends Component {
           <CCInput
             {...this._inputProps("number")}
             keyboardType="numeric"
-            containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]}
-          />
-          <CCInput
-            {...this._inputProps("expiry")}
-            keyboardType="numeric"
             containerStyle={[s.inputContainer, inputContainerStyle]}
           />
-          {requiresCVC && (
+          <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
+            <CCInput
+              {...this._inputProps("expiry")}
+              keyboardType="numeric"
+              containerStyle={[s.inputContainer, s.expContainer]}
+            />
+            {requiresCVC && (
             <CCInput
               {...this._inputProps("cvc")}
               keyboardType="numeric"
-              containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH }]}
+              containerStyle={[s.inputContainer, s.expContainer]}
             />
           )}
+          </View>
           {requiresPostalCode && (
             <CCInput
               {...this._inputProps("postalCode")}
